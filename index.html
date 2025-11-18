@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal G-apps</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Fondo animado -->
+    <div class="animated-bg">
+        <div class="bg-shape shape-1"></div>
+        <div class="bg-shape shape-2"></div>
+    </div>
+
+    <!-- cursor -->
+    <div class="cursor-glow"></div>
+
+    <!-- splash screen -->
+    <div id="splash-screen">
+        <div class="splash-particles"></div>
+        
+        <div id="logo-container">
+            <div class="glow-ring ring-1"></div>
+            <div class="glow-ring ring-2"></div>
+            <div class="glow-ring ring-3"></div>
+            <img src="assets/logo.png" alt="Logo Empresa" id="logo-image">
+        </div>
+        
+        <div id="loading-text">
+            Iniciando
+            <span class="loading-dots">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </span>
+        </div>
+    </div>
+
+    <!-- portal principal -->
+    <div id="main-portal">
+        <div class="portal-header">
+            <img src="assets/logo.png" alt="Logo">
+            <h1></h1>
+        </div>
+
+        <div class="apps-container">
+
+        </div>
+    </div>
+
+    <script>
+        // animación de partículas en el splash screen
+        function createSplashParticles() {
+            const container = document.querySelector('.splash-particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'splash-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                container.appendChild(particle);
+
+                anime({
+                    targets: particle,
+                    translateY: [
+                        {value: anime.random(-100, 100), duration: 2000}
+                    ],
+                    translateX: [
+                        {value: anime.random(-100, 100), duration: 2000}
+                    ],
+                    scale: [
+                        {value: anime.random(0.5, 2), duration: 1000}
+                    ],
+                    opacity: [
+                        {value: [0, 0.8, 0], duration: 2000}
+                    ],
+                    easing: 'easeInOutQuad',
+                    loop: true,
+                    delay: anime.random(0, 2000)
+                });
+            }
+        }
+
+        // splash
+        function initSplashAnimation() {
+            createSplashParticles();
+
+            const timeline = anime.timeline({
+                easing: 'easeOutExpo'
+            });
+
+            // Animación de anillos concéntricos
+            timeline.add({
+                targets: '.glow-ring',
+                scale: [0, 1],
+                opacity: [0, 1, 0],
+                duration: 2000,
+                delay: anime.stagger(200),
+                easing: 'easeOutExpo'
+            }, 0);
+
+            // Logo con múltiples efectos
+            timeline.add({
+                targets: '#logo-image',
+                scale: [0, 1.3, 0.9, 1],
+                rotate: [180, -10, 0],
+                opacity: [0, 1],
+                duration: 2000,
+                easing: 'easeOutElastic(1, .6)'
+            }, 400);
+
+            // Pulso continuo del logo
+            timeline.add({
+                targets: '#logo-image',
+                scale: [1, 1.08, 1],
+                filter: [
+                    'drop-shadow(0 0 40px rgba(227, 30, 36, 0.5))',
+                    'drop-shadow(0 0 80px rgba(227, 30, 36, 0.8))',
+                    'drop-shadow(0 0 40px rgba(227, 30, 36, 0.5))'
+                ],
+                duration: 1500,
+                loop: true,
+                easing: 'easeInOutSine'
+            }, 2400);
+
+            // Texto de carga
+            timeline.add({
+                targets: '#loading-text',
+                opacity: [0, 1],
+                translateY: [30, 0],
+                duration: 1000
+            }, 1800);
+
+            // Puntos animados
+            timeline.add({
+                targets: '.dot',
+                opacity: [0, 1],
+                scale: [0, 1],
+                delay: anime.stagger(150),
+                duration: 400,
+                loop: true,
+                direction: 'alternate',
+                easing: 'easeInOutQuad'
+            }, 2000);
+
+            // Animación de fondo
+            anime({
+                targets: '.bg-shape',
+                translateX: [
+                    {value: () => anime.random(-50, 50), duration: 3000}
+                ],
+                translateY: [
+                    {value: () => anime.random(-50, 50), duration: 3000}
+                ],
+                scale: [
+                    {value: () => anime.random(0.8, 1.2), duration: 2000}
+                ],
+                easing: 'easeInOutSine',
+                loop: true
+            });
+
+            setTimeout(() => {
+                hideSplashScreen();
+            }, 5000);
+        }
+
+        // Transición
+        function hideSplashScreen() {
+            const timeline = anime.timeline({
+                easing: 'easeInOutQuad'
+            });
+
+            timeline.add({
+                targets: '#loading-text',
+                opacity: [1, 0],
+                translateY: [0, -30],
+                duration: 500
+            });
+
+            timeline.add({
+                targets: '#logo-image',
+                scale: [1, 0],
+                rotate: [0, -180],
+                opacity: [1, 0],
+                duration: 800
+            }, 200);
+
+            timeline.add({
+                targets: '.glow-ring',
+                scale: [1, 2],
+                opacity: [0.5, 0],
+                duration: 800
+            }, 200);
+
+            timeline.add({
+                targets: '#splash-screen',
+                opacity: [1, 0],
+                scale: [1, 1.2],
+                duration: 600,
+                complete: function() {
+                    document.getElementById('splash-screen').style.display = 'none';
+                    showMainPortal();
+                }
+            }, 600);
+        }
+
+        // mostrar efectos de fondo
+        function showMainPortal() {
+            const mainPortal = document.getElementById('main-portal');
+            mainPortal.style.display = 'block';
+
+            anime({
+                targets: '#main-portal',
+                opacity: [0, 1],
+                duration: 1000
+            });
+
+            anime({
+                targets: '.portal-header',
+                opacity: [0, 1],
+                translateY: [80, 0],
+                duration: 1200,
+                easing: 'easeOutExpo'
+            });
+
+            anime({
+                targets: '.app-card',
+                opacity: [0, 1],
+                translateY: [60, 0],
+                scale: [0.8, 1],
+                rotate: [5, 0],
+                delay: anime.stagger(80, {start: 600}),
+                duration: 1000,
+                easing: 'easeOutExpo'
+            });
+
+            initCardInteractions();
+        }
+
+        // intereacciones en pantalla
+        function initCardInteractions() {
+            const cards = document.querySelectorAll('.app-card');
+            
+            cards.forEach(card => {
+                const icon = card.querySelector('.app-icon');
+                
+                card.addEventListener('mouseenter', function() {
+                    anime({
+                        targets: icon,
+                        rotate: [0, 360],
+                        scale: [1, 1.2, 1.1],
+                        duration: 800,
+                        easing: 'easeOutElastic(1, .6)'
+                    });
+                });
+
+                card.addEventListener('mouseleave', function() {
+                    anime({
+                        targets: icon,
+                        scale: [1.1, 1],
+                        duration: 400,
+                        easing: 'easeOutQuad'
+                    });
+                });
+
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    anime({
+                        targets: this,
+                        scale: [1, 0.95, 1.05, 1],
+                        duration: 600,
+                        easing: 'easeInOutQuad'
+                    });
+
+                    anime({
+                        targets: icon,
+                        scale: [1.1, 0.8, 1.3, 1.1],
+                        rotate: '+=360',
+                        duration: 600
+                    });
+
+                    const appName = this.getAttribute('data-app');
+                    console.log('Abriendo:', appName);
+                    
+                    setTimeout(() => {
+                        window.location.href = this.href;
+                    }, 600);
+                });
+            });
+        }
+
+        // cursosr personalizado
+        const cursorGlow = document.querySelector('.cursor-glow');
+        document.addEventListener('mousemove', (e) => {
+            anime({
+                targets: cursorGlow,
+                left: e.clientX - 10,
+                top: e.clientY - 10,
+                duration: 300,
+                easing: 'easeOutQuad'
+            });
+        });
+
+        // inicializacion
+        window.addEventListener('load', function() {
+            initSplashAnimation();
+        });
+    </script>
+    <script src="js/config.js"></script>
+</body>
+</html>
