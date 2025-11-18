@@ -76,6 +76,7 @@ function generateAppCards() {
     appConfig.applications.forEach(app => {
         const card = document.createElement('a');
         card.href = app.url;
+        card.rel = 'noopener noreferrer';
         card.className = 'app-card';
         card.setAttribute('data-app', app.id);
 
@@ -144,10 +145,15 @@ function initializeCardAnimations() {
                 duration: 300,
                 easing: 'easeInOutQuad'
             });
-
-            setTimeout(() => {
-                window.location.href = this.href;
+            if(this.href == "" || this.href == window.location.href) {
+                window.open('templates/coming-soon.html', '_blank');
+                return;
+            }else{
+                 setTimeout(() => {
+                window.open(this.href, '_blank');
             }, 300);
+            }
+           
         });
     });
 }

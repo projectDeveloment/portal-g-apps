@@ -281,12 +281,8 @@
                         duration: 600
                     });
 
-                    const appName = this.getAttribute('data-app');
-                    console.log('Abriendo:', appName);
+                    const appName = this.getAttribute('data-app');                 
                     
-                    setTimeout(() => {
-                        window.location.href = this.href;
-                    }, 600);
                 });
             });
         }
